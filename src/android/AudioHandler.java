@@ -441,8 +441,8 @@ public class AudioHandler extends CordovaPlugin {
 
         AudioManager am = (AudioManager) this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
         int result = am.requestAudioFocus(focusChangeListener,
-                                          AudioManager.STREAM_MUSIC,
-                                          AudioManager.AUDIOFOCUS_GAIN);
+                                          AudioManager.STREAM_ALARM,
+                                          AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
         if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             LOG.e(TAG2,result + " instead of " + AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
@@ -489,10 +489,12 @@ public class AudioHandler extends CordovaPlugin {
 
     private void onFirstPlayerCreated() {
         origVolumeStream = cordova.getActivity().getVolumeControlStream();
-        cordova.getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        cordova.getActivity().setVolumeControlStream(AudioManager.STREAM_ALARM);
     }
 
     private void onLastPlayerReleased() {
+        AudioManager am = (AudioManager) this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
+        am.abandonAudioFocus(focusChangeListener);
         if (origVolumeStream != -1) {
             cordova.getActivity().setVolumeControlStream(origVolumeStream);
             origVolumeStream = -1;

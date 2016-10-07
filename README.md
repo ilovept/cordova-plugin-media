@@ -1,3 +1,7 @@
+# Note: This is a fork of [apache/cordova-plugin-media](https://github.com/apache/cordova-plugin-media) that changes the plugin to support transient audio playback on Android. These changes could be a starting point to eventually fix [CB-11966](https://issues.apache.org/jira/browse/CB-11966).
+
+The changes are all about managing audio focus, which is [documented well here](https://developer.android.com/training/managing-audio/audio-focus.html). The version bump was necessary to get cordova to recompile the plugin after changing from `spec='2.3.1'` to a git URL.
+
 ---
 title: Media
 description: Record and play audio on the device.
