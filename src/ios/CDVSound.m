@@ -370,8 +370,12 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
                     bPlayAudioWhenScreenIsLocked = [playAudioWhenScreenIsLocked boolValue];
                 }
 
-                NSString* sessionCategory = bPlayAudioWhenScreenIsLocked ? AVAudioSessionCategoryPlayback : AVAudioSessionCategorySoloAmbient;
-                [self.avSession setCategory:sessionCategory error:&err];
+                [self.avSession setCategory:AVAudioSessionCategoryPlayAndRecord
+                                withOptions:AVAudioSessionCategoryOptionMixWithOthers |
+                                            AVAudioSessionCategoryOptionDuckOthers |
+                                            AVAudioSessionCategoryOptionDefaultToSpeaker |
+                                            AVAudioSessionCategoryOptionAllowBluetooth |
+                                            AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers error:&err];
                 if (![self.avSession setActive:YES error:&err]) {
                     // other audio with higher priority that does not allow mixing could cause this to fail
                     NSLog(@"Unable to play audio: %@", [err localizedFailureReason]);
@@ -839,7 +843,7 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
 {
     /* https://issues.apache.org/jira/browse/CB-11513 */
     NSMutableArray* keysToRemove = [[NSMutableArray alloc] init];
-    
+
     for(id key in [self soundCache]) {
         CDVAudioFile* audioFile = [[self soundCache] objectForKey:key];
         if (audioFile != nil) {
@@ -851,9 +855,9 @@ BOOL keepAvAudioSessionAlwaysActive = NO;
             }
         }
     }
-    
+
     [[self soundCache] removeObjectsForKeys:keysToRemove];
-    
+
     // [[self soundCache] removeAllObjects];
     // [self setSoundCache:nil];
     [self setAvSession:nil];
